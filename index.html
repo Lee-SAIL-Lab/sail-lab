@@ -27,6 +27,7 @@
     }
   }
 </script>
+<script>document.documentElement.classList.add("paged");</script>
 <style>
   /* Layout (v1 aesthetic, v5 content): sticky slate nav → left-aligned hero with live node graph → vision text + framework graphic → 3 framework cards → director card + researcher cards → project / news split → slate contact band with inquiry boxes */
   /* Dark-first: layered slates so cards, borders and graphics stay distinct. Light look stays available from the toggle. */
@@ -68,6 +69,12 @@
   .eyebrow { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
   .nav-logo { display: block; width: 26px; height: 34px; background: var(--band-ink); -webkit-mask: url("images/sail-logo.png") center / contain no-repeat; mask: url("images/sail-logo.png") center / contain no-repeat; }
+  /* One page at a time: the nav links switch pages */
+  html.paged [data-page]:not(.is-active) { display: none !important; }
+  html.paged body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+  html.paged main { flex: 1 0 auto; display: flex; flex-direction: column; }
+  html.paged #home.is-active { display: flex; flex-direction: column; justify-content: center; }
+  html.paged #home.is-active > .wrap { width: 100%; }
   .navlink { position: relative; }
   .navlink::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; background: var(--accent); transform: scaleX(0); transition: transform .2s ease; }
   .navlink:hover::after, .navlink[aria-current="true"]::after { transform: scaleX(1); }
@@ -250,7 +257,7 @@
 
 <main>
   <!-- ============ HERO ============ -->
-  <section id="home" class="hero-glow relative overflow-hidden border-b border-line">
+  <section id="home" data-page="home" class="hero-glow relative overflow-hidden border-b border-line">
     <canvas id="graph" class="absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
     <div class="wrap relative py-20 md:py-28">
       <p class="hero-eyebrow text-accent mb-7"><span class="nowrap"><span class="hero-initial">S</span>ustainable <span class="hero-initial">A</span>rtificial <span class="hero-initial">I</span>ntelligence</span> for <span class="hero-initial">I</span>nclusive <span class="hero-initial">L</span>earning</p>
@@ -272,7 +279,7 @@
   </section>
 
   <!-- ============ VISION ============ -->
-  <section id="about" aria-labelledby="vision-title" class="border-b border-line">
+  <section id="about" data-page="about" aria-labelledby="vision-title" class="border-b border-line">
     <div class="wrap py-16 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
       <div class="lg:col-span-5 min-w-0">
         <p class="eyebrow text-muted mb-2">About the lab</p>
@@ -333,7 +340,7 @@
   </section>
 
   <!-- ============ FRAMEWORK CARDS ============ -->
-  <section aria-labelledby="framework-title" class="bg-sunk border-b border-line">
+  <section data-page="about" aria-labelledby="framework-title" class="bg-sunk border-b border-line">
     <div class="wrap py-16 md:py-20">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
@@ -380,7 +387,7 @@
   </section>
 
   <!-- ============ TEAM ============ -->
-  <section id="people" aria-labelledby="people-title" class="border-b border-line">
+  <section id="people" data-page="people" aria-labelledby="people-title" class="border-b border-line">
     <div class="wrap py-16 md:py-20">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
@@ -465,7 +472,7 @@
   </section>
 
   <!-- ============ PROJECTS ============ -->
-  <section id="projects" aria-labelledby="proj-title" class="bg-sunk border-b border-line">
+  <section id="projects" data-page="projects" aria-labelledby="proj-title" class="bg-sunk border-b border-line">
     <div class="wrap py-16 md:py-20">
       <div class="mb-10">
         <p class="eyebrow text-muted mb-2">Projects</p>
@@ -558,7 +565,7 @@
   </section>
 
   <!-- ============ PUBLICATIONS & PRESENTATIONS ============ -->
-  <section id="publications" aria-labelledby="pubs-title" class="border-b border-line">
+  <section id="publications" data-page="publications" aria-labelledby="pubs-title" class="border-b border-line">
     <div class="wrap py-16 md:py-20">
       <div class="flex flex-wrap items-end justify-between gap-6 mb-8">
         <div>
@@ -587,7 +594,7 @@
   </section>
 
   <!-- ============ NEWS ============ -->
-  <section id="news" aria-labelledby="news-title" class="bg-sunk border-b border-line">
+  <section id="news" data-page="news" aria-labelledby="news-title" class="bg-sunk border-b border-line">
     <div class="wrap py-16 md:py-20">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
@@ -658,10 +665,9 @@
       <button type="button" id="news-more" class="pub-more" aria-controls="news-list" aria-expanded="false">View all news</button>
     </div>
   </section>
-</main>
 
-<!-- ============ CONTACT FOOTER ============ -->
-<footer id="contact" class="bg-band text-band-ink relative overflow-hidden">
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" data-page="contact" class="bg-band text-band-ink relative overflow-hidden pb-14 md:pb-16">
   <canvas id="footer-graph" class="absolute inset-x-0 top-0 w-full h-[320px] pointer-events-none" aria-hidden="true"></canvas>
   <div class="wrap pt-14 md:pt-16 relative">
     <div class="max-w-3xl">
@@ -719,10 +725,13 @@
       </div>
     </dl>
   </div>
-  <div class="border-t border-band-line">
-    <div class="wrap py-5 flex flex-wrap justify-between gap-3 text-xs text-band-muted">
-      <span>© 2026 SAIL Lab · UTSA</span>
-    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER (every page) ============ -->
+<footer class="site-footer bg-band text-band-muted border-t border-band-line">
+  <div class="wrap py-5 flex flex-wrap justify-between gap-3 text-xs">
+    <span>© 2026 SAIL Lab · UTSA</span>
   </div>
 </footer>
 
@@ -741,15 +750,35 @@
   menuBtn.addEventListener('click', () => { menu.hidden = !menu.hidden; menuBtn.setAttribute('aria-expanded', String(!menu.hidden)); });
   menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); }));
 
+  // ---- Page switcher: show one page at a time ----
   const links = document.querySelectorAll('.navlink');
-  const ids = ['about', 'people', 'projects', 'publications', 'news', 'contact'];
-  function setActive() {
-    let current = '';
-    for (const id of ids) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top < 140) current = id; }
-    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) current = 'contact';
-    links.forEach(l => l.setAttribute('aria-current', l.getAttribute('href') === '#' + current ? 'true' : 'false'));
+  const pages = [...document.querySelectorAll('[data-page]')];
+  const pageNames = { home: '', about: 'About', people: 'People', projects: 'Projects', publications: 'Publications', news: 'News', contact: 'Contact' };
+  const baseTitle = document.title;
+  let currentPage = null;
+  function showPage() {
+    let id = '';
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) {}
+    const target = id ? document.getElementById(id) : null;
+    const holder = target && target.closest('[data-page]');
+    const page = holder ? holder.dataset.page : 'home';
+    const changed = page !== currentPage;
+    currentPage = page;
+    pages.forEach(p => { p.classList.toggle('is-active', p.dataset.page === page); p.style.flexGrow = ''; });
+    const shown = pages.filter(p => p.dataset.page === page);
+    shown[shown.length - 1].style.flexGrow = '1'; // short pages still reach the footer
+    links.forEach(l => l.setAttribute('aria-current', l.getAttribute('href') === '#' + page ? 'true' : 'false'));
+    document.title = pageNames[page] ? pageNames[page] + ' · SAIL Lab' : baseTitle;
+    if (changed) dispatchEvent(new Event('resize')); // redraw the circuit animations at their new size
+    if (target && target !== holder && !target.hasAttribute('data-page')) {
+      target.scrollIntoView({ behavior: changed ? 'instant' : 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+    if (changed && document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
   }
-  addEventListener('scroll', setActive, { passive: true }); setActive();
+  addEventListener('hashchange', showPage);
+  showPage();
 
   document.querySelectorAll('.bio-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
