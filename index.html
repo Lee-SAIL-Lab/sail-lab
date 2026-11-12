@@ -52,13 +52,6 @@
     --glow: rgba(91, 140, 255, .14);
     color-scheme: dark;
   }
-  :root[data-look="light"] {
-    --bg: #ffffff; --sunk: #f3f5f8; --surface: #ffffff; --surface-2: #f3f5f8; --ink: #1b2330; --muted: #5a6577; --line: #dfe4eb;
-    --accent: #1f6bff; --accent-ink: #ffffff; --accent-soft: #e8f0ff;
-    --band: #1e2633; --band-2: #262f3e; --band-ink: #f2f5f9; --band-muted: #a3aec0; --band-line: #343f50; --band-accent: #8fb0ff;
-    --node: #9aa6b8; --glow: rgba(31, 107, 255, .06);
-    color-scheme: light;
-  }
   html { scroll-behavior: smooth; scroll-padding-top: 80px; }
   body { background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; }
   body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--band); }
@@ -87,6 +80,21 @@
   .icon-btn:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .proj-funder { font: 500 11px "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .proj-funder.funded { color: var(--accent); }
+  /* Current projects with figures */
+  .cur-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 768px) { .cur-grid { grid-template-columns: 1fr 1fr; } }
+  .cur-fig { position: relative; display: block; width: 100%; aspect-ratio: 12 / 5; background: #f3f6fb; border-bottom: 1px solid var(--line); cursor: zoom-in; padding: 0; }
+  .cur-fig img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .cur-zoom { position: absolute; right: 10px; bottom: 10px; font: 500 11px "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: rgba(10,16,24,.75); padding: 4px 8px; border-radius: 4px; opacity: 0; transition: opacity .2s ease; }
+  .cur-fig:hover .cur-zoom, .cur-fig:focus-visible .cur-zoom { opacity: 1; }
+  .cur-body { padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .fig-dialog { max-width: min(1200px, 94vw); width: 100%; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); }
+  .fig-dialog::backdrop { background: rgba(5,8,12,.82); }
+  .fig-dialog figure { margin: 0; }
+  .fig-dialog img { display: block; width: 100%; max-height: 80vh; object-fit: contain; background: #fff; }
+  .fig-dialog figcaption { padding: 12px 56px 14px 16px; font: 600 15px Sora, ui-sans-serif, system-ui, sans-serif; }
+  .fig-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; border-radius: 6px; background: rgba(10,16,24,.8); color: #fff; font-size: 22px; line-height: 1; border: 1px solid var(--line); }
+  .fig-close:hover { border-color: var(--accent); }
   .proj-card { box-shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 12px 28px -18px rgba(0,0,0,.6); }
   /* News timeline grouped by year */
   .news-list { position: relative; max-width: 820px; padding-left: 32px; display: flex; flex-direction: column; gap: 16px; }
@@ -109,6 +117,9 @@
   .news-upcoming { border-color: var(--accent); }
   .news-by { margin-top: 8px; font-size: 13px; color: var(--muted); }
   .news-by::before { content: "— "; }
+  .news-titles { margin-top: 8px; padding-left: 20px; list-style: disc; font-size: 15px; color: var(--muted); max-width: 68ch; }
+  .news-titles li { margin-top: 4px; }
+  .news-titles em { font-style: italic; }
 
   /* Publications & Presentations */
   .pub-me { color: var(--ink); font-weight: 600; }
@@ -137,6 +148,7 @@
   .pub-link:hover { text-decoration: underline; }
   .pub-more { margin-top: 16px; font: 500 14px "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 9px 16px; }
   .pub-more:hover { border-color: var(--accent); }
+  .pub-empty { padding: 20px; color: var(--muted); font-size: 15px; }
   .pub-more[hidden] { display: none !important; }
   @media (max-width: 639px) {
     .pub-item { grid-template-columns: 1fr; gap: 4px; padding: 14px 16px; }
@@ -146,7 +158,6 @@
   .hero-eyebrow { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 500; font-size: 15px; line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; text-wrap: balance; max-width: 50ch; }
   @media (min-width: 768px) { .hero-eyebrow { font-size: 19px; } }
   .hero-initial { color: #ffffff; }
-  :root[data-look="light"] .hero-initial { color: var(--ink); }
   .nowrap { white-space: nowrap; }
   @media (max-width: 420px) { .hero-eyebrow { font-size: 13.5px; letter-spacing: .05em; } }
   .hero-glow { background: radial-gradient(60% 90% at 78% 40%, var(--glow), transparent 70%), var(--bg); }
@@ -168,12 +179,6 @@
     --t2-band: #3f4c5f; --t2-ink: #ffffff; --t2-top: #6c798c; --t2-left: #56637a; --t2-right: #4a5669; --t2-icon: #f1f4f8;
     --t3-band: #556479; --t3-ink: #ffffff; --t3-top: #93a0b2; --t3-left: #74829a; --t3-right: #66748a; --t3-icon: #141c27;
     --vg-ground: #0f1620; --vg-ring: #c9d2de;
-  }
-  :root[data-look="light"] {
-    --t1-band: #e3e7ed; --t1-ink: #1c2838; --t1-top: #f6f7f9; --t1-left: #d3d9e1; --t1-right: #bcc5d0; --t1-icon: #33445a;
-    --t2-band: #5c6a7d; --t2-ink: #ffffff; --t2-top: #c7ced8; --t2-left: #a3adbb; --t2-right: #8a96a6; --t2-icon: #26364a;
-    --t3-band: #1c2a3b; --t3-ink: #ffffff; --t3-top: #8592a4; --t3-left: #5d6b7e; --t3-right: #45546a; --t3-icon: #f3f6fa;
-    --vg-ground: #f6f7f9; --vg-ring: #1c2a3b;
   }
   .vision-copy em { font-style: normal; font-weight: 600; color: var(--ink); background: linear-gradient(transparent 62%, var(--accent-soft) 62%); padding-inline: 2px; }
   .vision-graphic { background: var(--vg-ground); }
@@ -216,6 +221,18 @@
   }
 </style>
 
+
+<style id="about-colors">
+  /* About diagram in teal, blue, and violet (chosen Nov 11, 2026); the framework cards' icons match */
+  :root {
+    --t1-band: #1d5b5f; --t1-ink: #eafaf8; --t1-top: #44918f; --t1-left: #337878; --t1-right: #2a6767; --t1-icon: #e0f6f3;
+    --t2-band: #2c5aa6; --t2-ink: #ffffff; --t2-top: #6b93e0; --t2-left: #507bcb; --t2-right: #446ab4; --t2-icon: #eef3ff;
+    --t3-band: #5a50b2; --t3-ink: #ffffff; --t3-top: #9d93ea; --t3-left: #8177d7; --t3-right: #6e63c3; --t3-icon: #f3f1ff;
+    --vg-ring: #a9c2ff;
+  }
+  #fw-context .bg-accent-soft { color: #6fd0c6; background: rgba(68,145,143,.22); }
+  #fw-results .bg-accent-soft { color: #b3a9ff; background: rgba(129,119,215,.24); }
+</style>
 </head>
 <body>
 
@@ -227,6 +244,7 @@
       <span class="font-display font-semibold text-lg tracking-tight">SAIL Lab</span>
     </a>
     <ul class="hidden md:flex items-center gap-7 text-sm font-medium text-band-muted">
+      <li><a class="navlink hover:text-band-ink" href="#home">Home</a></li>
       <li><a class="navlink hover:text-band-ink" href="#about">About</a></li>
       <li><a class="navlink hover:text-band-ink" href="#people">People</a></li>
       <li><a class="navlink hover:text-band-ink" href="#projects">Projects</a></li>
@@ -235,9 +253,6 @@
       <li><a class="navlink hover:text-band-ink" href="#contact">Contact</a></li>
     </ul>
     <div class="flex items-center gap-2">
-      <button id="theme-toggle" type="button" class="icon-btn w-9 h-9 grid place-items-center rounded-md border border-band-line text-band-muted" aria-label="Toggle light and dark theme">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-      </button>
       <button id="menu-toggle" type="button" class="md:hidden icon-btn w-9 h-9 grid place-items-center rounded-md border border-band-line text-band-muted" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -245,6 +260,7 @@
   </nav>
   <div id="mobile-menu" class="md:hidden border-t border-band-line" hidden>
     <ul class="wrap py-3 flex flex-col text-band-ink font-medium">
+      <li><a class="block py-2.5" href="#home">Home</a></li>
       <li><a class="block py-2.5" href="#about">About</a></li>
       <li><a class="block py-2.5" href="#people">People</a></li>
       <li><a class="block py-2.5" href="#projects">Projects</a></li>
@@ -509,8 +525,62 @@
         </div>
       </article>
 
-      <!-- Other projects -->
+      <!-- Current projects (from "Current Projects", Nov 2026). Figures recolored in the "light, all colors" style; the AI Software figure keeps its original greens on a sage background. Each figure opens larger when clicked. -->
       <div class="flex flex-wrap items-end justify-between gap-3 mt-14 mb-6">
+        <h3 class="font-display font-semibold text-xl">Current projects</h3>
+        <p class="text-sm text-muted">Click a figure to see it larger.</p>
+      </div>
+      <div class="cur-grid">
+        <article class="cur-proj proj-card bg-surface border border-line rounded-lg overflow-hidden flex flex-col">
+          <button type="button" class="cur-fig" style="background:#6a92b0" aria-label="Enlarge figure: D4SG: Decode, Discover, Design, and Develop for Social Good">
+            <img src="images/project-d4sg.jpg" alt="D4SG overview: the context (AI learning experiences in data science and AI ethics for K-12 students), classroom implementation in four steps (Decode, Discover, Design, Develop), and outcomes (knowledge and skills)." loading="lazy">
+            <span class="cur-zoom" aria-hidden="true">Click to enlarge</span>
+          </button>
+          <div class="cur-body">
+            <p class="proj-funder funded">Funded by UTSA INTRA Grant</p>
+            <h4 class="font-display font-semibold text-lg">D4SG: Decode, Discover, Design, and Develop for Social Good</h4>
+            <p class="text-sm text-muted">An educational research initiative that broadens participation in computer science, technology, and AI education among historically underrepresented students through socially meaningful, hands-on learning experiences. Students learn to apply computing concepts and emerging technologies to identify and address real-world challenges in their communities. The project fosters computational thinking, AI literacy, creative problem-solving, and technological agency while positioning students as creators and innovators who use technology to generate positive social impact.</p>
+          </div>
+        </article>
+        <article class="cur-proj proj-card bg-surface border border-line rounded-lg overflow-hidden flex flex-col">
+          <button type="button" class="cur-fig" style="background:#2f8f8a" aria-label="Enlarge figure: TCAL: ThinkMate for Critical AI Literacy">
+            <img src="images/project-tcal.png" alt="Three ThinkMate screens: learners state their purpose for using the AI, decide whether to accept, modify, or reject its suggestion and explain why, then reflect on the interaction." loading="lazy">
+            <span class="cur-zoom" aria-hidden="true">Click to enlarge</span>
+          </button>
+          <div class="cur-body">
+            <p class="proj-funder funded">Funded by UTSA STAR Award</p>
+            <h4 class="font-display font-semibold text-lg">TCAL: ThinkMate for Critical AI Literacy</h4>
+            <p class="text-sm text-muted">A research project focused on developing and evaluating ThinkMate, an AI-powered cognitive partner designed to strengthen learners' critical AI literacy. Rather than encouraging passive acceptance of generative AI outputs, ThinkMate prompts users to examine AI-generated responses, articulate their reasoning, provide justifications, and make informed decisions. The project investigates how structured human-AI dialogue can foster critical evaluation, reflective judgment, and responsible engagement with generative AI.</p>
+          </div>
+        </article>
+        <article class="cur-proj proj-card bg-surface border border-line rounded-lg overflow-hidden flex flex-col">
+          <button type="button" class="cur-fig" style="background:#c9e5d7" aria-label="Enlarge figure: AI-Augmented Software Education">
+            <img src="images/project-ai-software.jpg" alt="Three parts of the project: project-based learning modules, LLM adaptation, and an AI-ready software workforce." loading="lazy">
+            <span class="cur-zoom" aria-hidden="true">Click to enlarge</span>
+          </button>
+          <div class="cur-body">
+            <p class="proj-funder">Research project</p>
+            <h4 class="font-display font-semibold text-lg">AI-Augmented Software Education</h4>
+            <p class="text-sm text-muted">A research project focused on redesigning software engineering education to prepare students for AI-augmented software development. The project develops six project-based learning modules using real-world open-source software to help students practice LLM-assisted coding, prompt engineering, software design, requirements refinement, and validation of AI-generated code. Through expert reviews, classroom trials, and multi-site evaluations, the project investigates the effectiveness and feasibility of integrating emerging AI-driven software development practices into undergraduate software engineering curricula.</p>
+          </div>
+        </article>
+        <article class="cur-proj proj-card bg-surface border border-line rounded-lg overflow-hidden flex flex-col">
+          <button type="button" class="cur-fig" style="background:#396e96" aria-label="Enlarge figure: Culture, Community, Technology, and Learning">
+            <img src="images/project-culture.jpg" alt="Students learning with technology: working at a computer, flying a drone outdoors, and using a virtual reality headset." loading="lazy">
+            <span class="cur-zoom" aria-hidden="true">Click to enlarge</span>
+          </button>
+          <div class="cur-body">
+            <p class="proj-funder">Research project</p>
+            <h4 class="font-display font-semibold text-lg">Culture, Community, Technology, and Learning</h4>
+            <p class="text-sm text-muted">This project connects technology with students' cultural backgrounds, lived experiences, and community contexts. The project co-designs culturally meaningful computing curricula and learning activities that reflect students' interests, identities, and community knowledge. The project investigates how community-engaged and contextually relevant approaches to computing education can strengthen student engagement, belonging, and participation while making computing more meaningful and accessible to diverse learners.</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Other projects (shown with the "Show other research projects" button) -->
+      <button type="button" id="past-more" class="pub-more mt-10" aria-expanded="false" aria-controls="past-projects">Show other research projects</button>
+      <div id="past-projects" hidden>
+      <div class="flex flex-wrap items-end justify-between gap-3 mt-10 mb-6">
         <h3 class="font-display font-semibold text-xl">Other research projects</h3>
         <p class="text-sm text-muted">Projects Dr. Lee has contributed to, with their funders.</p>
       </div>
@@ -561,6 +631,7 @@
           <p class="text-sm text-muted">Examining online and distance education with a focus on assessment, including research on technology-enhanced assessments such as ChatGPT.</p>
         </article>
       </div>
+      </div>
     </div>
   </section>
 
@@ -581,9 +652,20 @@
       </div>
 
       <div id="panel-pubs" role="tabpanel" aria-labelledby="tab-pubs" class="pub-panel">
-        <div class="pub-filters" data-for="pubs" aria-label="Filter publications"></div>
-        <div class="pub-list" id="list-pubs"></div>
-        <button type="button" class="pub-more" data-for="pubs"></button>
+        <div class="pub-filters pub-sub" role="group" aria-label="Publication category">
+          <button type="button" class="pub-chip" aria-pressed="true" aria-controls="sub-peer">Peer reviewed</button>
+          <button type="button" class="pub-chip" aria-pressed="false" aria-controls="sub-preprint">Preprints</button>
+        </div>
+        <div id="sub-peer">
+          <div class="pub-filters" data-for="pubs" aria-label="Filter publications"></div>
+          <div class="pub-list" id="list-pubs"></div>
+          <button type="button" class="pub-more" data-for="pubs"></button>
+        </div>
+        <div id="sub-preprint" hidden>
+          <div class="pub-filters" data-for="pre" aria-label="Filter preprints"></div>
+          <div class="pub-list" id="list-pre"></div>
+          <button type="button" class="pub-more" data-for="pre"></button>
+        </div>
       </div>
       <div id="panel-pres" role="tabpanel" aria-labelledby="tab-pres" class="pub-panel" hidden>
         <div class="pub-filters" data-for="pres" aria-label="Filter presentations"></div>
@@ -606,15 +688,30 @@
 
       <ol class="news-list" id="news-list">
         <li class="news-item news-upcoming">
+          <p class="news-meta"><span class="news-flag">Upcoming</span> April 2027 · Presentations</p>
+          <h3 class="news-title">Four research studies accepted at AERA 2027</h3>
+          <p class="news-body">SAIL Lab members will present four research studies at the American Educational Research Association (AERA) Annual Meeting in Toronto, Canada:</p>
+          <ul class="news-titles">
+            <li><em>Co-creator or competitor? High school students' ambivalence toward creator identity and agency in AI-assisted art</em></li>
+            <li><em>Contingent or fixed? A case study of adaptive scaffolding in LLM-based mathematics intelligent tutoring systems</em></li>
+            <li><em>Do learning analytics dashboards support self-regulated learning? A critical review and design framework</em></li>
+            <li><em>Human-AI co-regulation and the emergence of heterogeneous learning pathways in AI-integrated mathematics</em></li>
+          </ul>
+        </li>
+        <li class="news-item news-upcoming">
           <p class="news-meta"><span class="news-flag">Upcoming</span> December 2026 · Workshops</p>
           <h3 class="news-title">Faculty workshops at Tecnológico de Monterrey</h3>
           <p class="news-body">Dr. Lee is collaborating with Drs. Miles and Gabriela Ortiz and Ana Yael Vanoye Carcia. We will conduct PD workshops for faculty at Tecnológico de Monterrey in December. Funded by the American Society for Engineering Education.</p>
         </li>
         <li class="news-item">
+          <p class="news-meta">November 2026 · Presentation</p>
+          <h3 class="news-title">The PAT Framework at AECT 2026</h3>
+          <p class="news-body">Dr. Lee presented her research, <em>The PAT Framework: Participatory design, AI integration, and transformative learning</em>, at the Association for Educational Communications and Technology (AECT) conference in Chicago.</p>
+        </li>
+        <li class="news-item">
           <p class="news-meta">September 2026 · Publication</p>
           <h3 class="news-title">Wei Yan's first first-authored journal paper accepted</h3>
-          <p class="news-body">I'm thrilled to share some wonderful news! Wei Yan's very first first-authored journal paper has been accepted for publication! I am incredibly proud to see her achieve this significant milestone in her academic career. Congratulations, Wei, on this well-deserved success! Way to go, Wei!</p>
-          <p class="news-by">Dr. Lee</p>
+          <p class="news-body">We're thrilled to share some wonderful news! Wei Yan's very first first-authored journal paper has been accepted for publication! We are incredibly proud to see her achieve this significant milestone in her academic career. Congratulations, Wei, on this well-deserved success! Way to go, Wei!</p>
         </li>
         <li class="news-item">
           <p class="news-meta">July 2026 · Publication</p>
@@ -622,12 +719,12 @@
           <p class="news-body">Research on learner agency in the era of AI is published in <em>AI &amp; Society</em>.</p>
           <a class="news-link" href="https://link.springer.com/article/10.1007/s00146-026-03187-3" target="_blank" rel="noopener">Read the article ↗</a>
         </li>
-        <li class="news-item">
+        <li class="news-item news-older" hidden>
           <p class="news-meta">June 2026 · Presentations</p>
           <h3 class="news-title">Two research papers at ISLS 2026</h3>
           <p class="news-body">We are presenting two research papers at the ISLS conference in Irvine, California.</p>
         </li>
-        <li class="news-item">
+        <li class="news-item news-older" hidden>
           <p class="news-meta">June 2026 · Presentation</p>
           <h3 class="news-title">Critical AI literacy at ICOLSEI 2026</h3>
           <p class="news-body">Dr. Lee is presenting her research on critical AI literacy at the ICOLSEI conference.</p>
@@ -659,7 +756,6 @@
           <p class="news-meta">February 2025 · Workshop</p>
           <h3 class="news-title">AI in the classroom workshop at the Alamo STEM conference</h3>
           <p class="news-body">Dr. Lee and our doctoral students, Donna and Wei, provided a workshop for teachers at the Alamo STEM conference on practical guidelines for AI in the classroom.</p>
-          <p class="news-link-note">[Add workshop photos]</p>
         </li>
       </ol>
       <button type="button" id="news-more" class="pub-more" aria-controls="news-list" aria-expanded="false">View all news</button>
@@ -721,12 +817,21 @@
       </div>
       <div>
         <dt class="eyebrow text-band-muted mb-2">Location</dt>
-        <dd>Department of Interdisciplinary Learning and Teaching<br>The University of Texas at San Antonio<br><span class="text-band-muted">[Building, room, and mailing address]</span></dd>
+        <dd>SAIL Lab | The University of Texas at San Antonio<br>Durango Building, 4.362D<br>501 W Durango Blvd., San Antonio, TX 78207</dd>
       </div>
     </dl>
   </div>
   </section>
 </main>
+
+<!-- Figure viewer for project figures -->
+<dialog id="fig-dialog" class="fig-dialog" aria-label="Project figure">
+  <figure>
+    <img id="fig-dialog-img" src="" alt="">
+    <figcaption id="fig-dialog-cap"></figcaption>
+  </figure>
+  <button type="button" id="fig-dialog-close" class="fig-close" aria-label="Close">×</button>
+</dialog>
 
 <!-- ============ FOOTER (every page) ============ -->
 <footer class="site-footer bg-band text-band-muted border-t border-band-line">
@@ -741,9 +846,6 @@
   const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const root = document.documentElement;
 
-  document.getElementById('theme-toggle').addEventListener('click', () => {
-    root.dataset.look = root.dataset.look === "light" ? "dark" : "light";
-  });
 
   const menuBtn = document.getElementById('menu-toggle');
   const menu = document.getElementById('mobile-menu');
@@ -805,8 +907,8 @@
       { y: '2026', t: 'Proceedings', a: 'Hernandez, J., Lee, H., & Bandela, S.', ti: 'From players to creators: Enhancing middle school students’ learning and motivation through VR game design', v: 'Society for Information Technology & Teacher Education International Conference (pp. 361–366). AACE', u: 'https://www.learntechlib.org/primary/p/2128998/' },
       { y: '2026', t: 'Journal article', a: 'Miles, U., & Lee, H.', ti: 'Arguing with evidence: Exploring AI through scientific debate and discussion to support critical thinking', v: 'The Science Teacher', press: true },
       { y: '2026', t: 'Journal article', a: 'Yan, W., & Lee, H.', ti: 'Learning analytics dashboard for personalized learning: A bibliometric and content analysis', v: 'Journal of Interactive Learning Research', press: true },
-      { y: '2026', t: 'Proceedings', a: 'Yan, W., Lee, H., Dancer, D., & Yu, W.', ti: 'Equitable learning analytics dashboards: Roles and mechanisms in personalized learning', v: 'Proceedings of the 20th International Conference of the Learning Sciences (ICLS 2026), pp. 719–721. ISLS' },
-      { y: '2026', t: 'Proceedings', a: 'Yan, W., Lee, H., Dancer, D., & Yu, W.', ti: 'Personalized learning analytics dashboards in higher education: Fostering self-regulated learning and student agency', v: 'Proceedings of the 20th International Conference of the Learning Sciences (ICLS 2026), pp. 2904–2906. ISLS' },
+      { y: '2026', t: 'Proceedings', a: 'Yan, W., Lee, H., Dancer, D., & Yu, W.', ti: 'Equitable learning analytics dashboards: Roles and mechanisms in personalized learning', v: 'Proceedings of the 20th International Conference of the Learning Sciences (ICLS 2026), pp. 719–721. ISLS', u: 'https://doi.org/10.22318/cscl2026.113693' },
+      { y: '2026', t: 'Proceedings', a: 'Yan, W., Lee, H., Dancer, D., & Yu, W.', ti: 'Personalized learning analytics dashboards in higher education: Fostering self-regulated learning and student agency', v: 'Proceedings of the 20th International Conference of the Learning Sciences (ICLS 2026), pp. 2905–2907. ISLS', u: 'https://doi.org/10.22318/icls2026.877497' },
       { y: '2025', t: 'Journal article', a: 'Lee, H., Kim, H., & Yan, W.', ti: 'Promoting inclusive AI and technology in K-12: A review of context, instructional strategies, and learning outcomes', v: 'Computers and Education: Artificial Intelligence, 100478', u: 'https://doi.org/10.1016/j.caeai.2025.100478' },
       { y: '2025', t: 'Proceedings', a: 'Lee, H., & Kim, S.', ti: 'The interplay of socioeconomic status, self-efficacy, and screen time in predicting computer and information literacy among middle school students', v: 'EdMedia + Innovate Learning (pp. 1201–1207). AACE', u: 'https://www.learntechlib.org/primary/p/226260/' },
       { y: '2025', t: 'Proceedings', a: 'Kim, S., & Lee, H.', ti: 'Understanding ICT integration: The role of needs, participation, and self-efficacy in instructional emphasis', v: 'EdMedia + Innovate Learning (pp. 583–588). AACE', u: 'https://www.learntechlib.org/primary/p/226191/' },
@@ -822,8 +924,22 @@
       { y: '2022', t: 'Book chapter', a: 'Hickey, D., Harris, T., & Lee, H.', ti: 'Dimensions of assessment in online and open education in terms of purpose, function, and theory', v: 'In O. Zawacki-Richter & I. Jung (Eds.), Handbook of Open, Distance, and Digital Education (pp. 1325–1338). Springer', u: 'https://doi.org/10.1007/978-981-19-2080-6_80' },
       { y: '2018', t: 'Book chapter', a: 'Lee, H.', ti: 'Foley mixing project', v: 'In Teacher Guidebook for STEAM Education. Ministry of Education & Korean Science Foundation (written in Korean)' }
     ];
+
+    // Preprints: add one line per preprint, newest first, in the same format as PUBS above.
+    // Example: { y: '2026', t: 'Preprint', a: 'Lee, H., & Yan, W.', ti: 'Title of the preprint', v: 'SSRN', u: 'https://doi.org/...' },
+    const PREPRINTS = [
+      { y: "2026", t: "Preprint", a: "Lee, H., & Yu, W.", ti: "What does it mean to use AI critically? Unpacking critical AI literacy through students' evaluation of AI-generated content", v: "arXiv preprint arXiv:2610.10743", u: "https://doi.org/10.48550/arXiv.2610.10743" },
+      { y: "2026", t: "Preprint", a: "Lee, H., Ham, D., Kim, S., & Emanuel, T.", ti: "Beyond screen time: Explaining cross-national differences in digital literacy through socioeconomic and psychological mechanisms", v: "arXiv preprint arXiv:2610.07619", u: "https://doi.org/10.48550/arXiv.2610.07619" },
+      { y: "2026", t: "Preprint", a: "Lee, H.", ti: "Self-Regulated Learning in AI-Supported Environments: Heterogeneous Achievement Associations and Learner-AI Interaction Patterns", v: "Available at SSRN 7542380", u: "http://dx.doi.org/10.2139/ssrn.7542380" },
+      { y: "2026", t: "Preprint", a: "Lee, H.", ti: "Who Benefits, and When? Trajectories of Academic Achievement and Interest in AI-Supported Learning", v: "arXiv preprint arXiv:2611.10467", u: "https://arxiv.org/abs/2611.10467" }
+    ];
     const AERA = 'American Educational Research Association (AERA) Annual Meeting', AECT = 'Association for Educational Communication and Technology (AECT) Annual Meeting', IST = 'IST Conference', ISLS = 'International Society of the Learning Sciences (ISLS) Annual Meeting';
     const PRES = [
+      { y: "2027", d: "April 2027", t: "Conference", a: "Lee, H., Yu, W., & Lee, J.", ti: "Co-Creator or Competitor? High School Students’ Ambivalence Toward Creator Identity and Agency in AI-Assisted Art", v: AERA, l: "Toronto, Canada" },
+      { y: "2027", d: "April 2027", t: "Conference", a: "Lee, H., & Yan, W.", ti: "Contingent or Fixed? A Case Study of Adaptive Scaffolding in LLM-Based Mathematics Intelligent Tutoring Systems", v: AERA, l: "Toronto, Canada" },
+      { y: "2027", d: "April 2027", t: "Conference", a: "Yan, W., & Lee, H.", ti: "Do Learning Analytics Dashboards Support Self-Regulated Learning? A Critical Review and Design Framework", v: AERA, l: "Toronto, Canada" },
+      { y: "2027", d: "April 2027", t: "Conference", a: "Lee, H.", ti: "Human-AI Co-Regulation and the Emergence of Heterogeneous Learning Pathways in AI-Integrated Mathematics", v: AERA, l: "Toronto, Canada" },
+      { y: "2026", d: "November 2026", t: "Conference", a: "Yu, W., & Lee, H.", ti: "The PAT Framework: Participatory design, AI integration, and transformative learning", v: AECT, l: "Chicago, IL" },
       { y: '2026', d: 'June 2026', t: 'Conference', a: 'Lee, H.', ti: 'From trusting AI to questioning it: Fostering critical AI literacy through culturally relevant computing', v: 'International Conference on Learning Sciences and Educational Innovation (ICOLSEI 2026)', l: 'Seoul, South Korea' },
       { y: '2026', d: 'April 2026', t: 'Invited talk', a: 'Lee, H.', ti: 'Empowering youth to design AI for social good', v: 'The University of Texas at San Antonio', l: 'USA' },
       { y: '2026', d: 'April 2026', t: 'Conference', a: 'Lee, H., Bandela, S., Hernandez, J., & Emanuel, T.', ti: 'Designing AI for social good: Critical AI literacy in a culturally grounded youth curriculum', v: AERA, l: 'Los Angeles, CA' },
@@ -870,13 +986,14 @@
     const authors = (a) => esc(a).replace(LAB, '<span class="pub-me">$1</span>');
     const CFG = {
       pubs: { data: PUBS, filters: [], labels: { 'Journal article': 'Journal articles', 'Proceedings': 'Conference proceedings', 'Book chapter': 'Book chapters', 'Dissertation': 'Dissertation' }, initial: 8 },
+      pre: { data: PREPRINTS, filters: [], labels: { 'Preprint': 'Preprints' }, initial: 8, empty: 'Preprints will be listed here soon.' },
       pres: { data: PRES, filters: ['All', 'Conference', 'Invited talk', 'Teacher workshop'], labels: { 'Conference': 'Conference presentations', 'Invited talk': 'Invited talks', 'Teacher workshop': 'Teacher workshops' }, initial: 8 }
     };
-    const state = { pubs: { f: 'All', all: false }, pres: { f: 'All', all: false } };
+    const state = { pubs: { f: 'All', all: false }, pre: { f: 'All', all: false }, pres: { f: 'All', all: false } };
 
     function itemHTML(kind, x) {
-      const left = kind === 'pubs' ? esc(x.t) : esc(x.d) + '<br>' + esc(x.t);
-      const venue = kind === 'pubs' ? esc(x.v) : esc(x.v) + (x.l ? ' · ' + esc(x.l) : '');
+      const left = kind !== 'pres' ? esc(x.t) : esc(x.d) + '<br>' + esc(x.t);
+      const venue = kind !== 'pres' ? esc(x.v) : esc(x.v) + (x.l ? ' · ' + esc(x.l) : '');
       const badges = [];
       if (x.award) badges.push('<span class="pub-badge award">' + esc(x.award) + '</span>');
       if (x.press) badges.push('<span class="pub-badge">In press</span>');
@@ -889,12 +1006,12 @@
       const shown = st.all ? rows : rows.slice(0, cfg.initial);
       let html = '', year = null;
       for (const x of shown) { if (x.y !== year) { year = x.y; html += '<div class="pub-year">' + year + '</div>'; } html += itemHTML(kind, x); }
-      document.getElementById('list-' + kind).innerHTML = html || '<p class="pub-item">No entries yet.</p>';
+      document.getElementById('list-' + kind).innerHTML = html || '<p class="pub-empty">' + (cfg.empty || 'No entries yet.') + '</p>';
       const more = document.querySelector('.pub-more[data-for="' + kind + '"]');
       more.hidden = rows.length <= cfg.initial;
       more.textContent = st.all ? 'Show fewer' : 'Show all';
     }
-    for (const kind of ['pubs', 'pres']) {
+    for (const kind of ['pubs', 'pre', 'pres']) {
       const cfg = CFG[kind], box = document.querySelector('.pub-filters[data-for="' + kind + '"]');
       box.hidden = cfg.filters.length === 0;
       box.innerHTML = cfg.filters.map(f => {
@@ -913,6 +1030,11 @@
       });
       render(kind);
     }
+    // Peer reviewed / Preprints switch inside the Publications tab
+    const subs = [...document.querySelectorAll('.pub-sub .pub-chip')];
+    subs.forEach(b => b.addEventListener('click', () => {
+      subs.forEach(c => { const on = c === b; c.setAttribute('aria-pressed', String(on)); document.getElementById(c.getAttribute('aria-controls')).hidden = !on; });
+    }));
     const tabs = [document.getElementById('tab-pubs'), document.getElementById('tab-pres')];
     function select(tab) {
       tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
@@ -920,6 +1042,31 @@
     tabs.forEach((t, i) => {
       t.addEventListener('click', () => select(t));
       t.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; select(n); n.focus(); } });
+    });
+  })();
+
+  // Projects: enlarge a figure when clicked
+  (function () {
+    const dlg = document.getElementById('fig-dialog'); if (!dlg || !dlg.showModal) return;
+    const img = document.getElementById('fig-dialog-img'), cap = document.getElementById('fig-dialog-cap');
+    document.querySelectorAll('.cur-fig').forEach(btn => btn.addEventListener('click', () => {
+      const src = btn.querySelector('img');
+      img.src = src.currentSrc || src.src; img.alt = src.alt;
+      cap.textContent = btn.closest('.cur-proj').querySelector('h4').textContent;
+      dlg.showModal();
+    }));
+    document.getElementById('fig-dialog-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  })();
+
+  // Projects: show or hide the other research projects
+  (function () {
+    const btn = document.getElementById('past-more'), box = document.getElementById('past-projects'); if (!btn || !box) return;
+    btn.addEventListener('click', () => {
+      const open = box.hidden; box.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? 'Hide other research projects' : 'Show other research projects';
+      if (open) box.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     });
   })();
 
